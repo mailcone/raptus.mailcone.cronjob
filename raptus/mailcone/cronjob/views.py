@@ -1,6 +1,6 @@
 import grok
 
-from z3c.taskqueue.interfaces import ICronJobs
+from z3c.taskqueue.interfaces import ICronJob
 
 from raptus.mailcone.core.interfaces import IMailcone
 from raptus.mailcone.layout.views import Page, EditForm, AddForm
@@ -11,4 +11,4 @@ grok.templatedir('templates')
 
 class CronjobSettings(AddForm, Page):
     grok.context(IMailcone)
-    form_fields = grok.AutoFields(ICronJobs)
+    form_fields = grok.AutoFields(ICronJob)
