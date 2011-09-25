@@ -25,7 +25,7 @@ setup(name='raptus.mailcone.cronjob',
       install_requires=[
           # -*- Extra requirements: -*-
           'setuptools',
-          'raptus.mailcone.core'
+          'raptus.mailcone.core',
           'raptus.mailcone.customers',
           'raptus.mailcone.rules',
           'z3c.taskqueue',
