@@ -76,12 +76,15 @@ class CronJobTable(BaseDataTable):
     grok.context(interfaces.ICronJobContainer)
     interface_fields = interfaces.ICronJob
     select_fields = ['id', 'time_of_next_call']
-    actions = (dict( title = _('delete'),
-                     cssclass = 'ui-icon ui-icon-trash ui-modal-minsize ui-datatable-ajaxlink',
-                     link = 'deletecronjobform'),
-               dict( title = _('edit'),
-                     cssclass = 'ui-icon ui-icon-pencil ui-datatable-ajaxlink',
-                     link = 'editcronjobform'),)
+    actions = ( dict( title = _('manual run'),
+                      cssclass = 'ui-icon ui-icon-arrowrefresh-1-s',
+                      link = 'manualrun'),
+                dict( title = _('delete'),
+                      cssclass = 'ui-icon ui-icon-trash ui-modal-minsize ui-datatable-ajaxlink',
+                      link = 'deletecronjobform'),
+                dict( title = _('edit'),
+                      cssclass = 'ui-icon ui-icon-pencil ui-datatable-ajaxlink',
+                      link = 'editcronjobform'),)
 
 
 
@@ -126,19 +129,6 @@ class AddCronJobForm(AddForm):
 
 
 
-class CronJobTraverser(grok.Traverser):
-    grok.context(interfaces.ICronJobContainer)
-    
-    def traverse(self, name):
-        view = component.queryMultiAdapter((self.context, self.request,), name=name)
-        if view:
-            return view
-        try:
-            return self.context.getCronJob(int(name))
-        except:
-            raise NotFound(self.context, name, self.request)
-
-
 
 class EditCronJobForm(EditForm):
     grok.context(interfaces.ICronJob)
@@ -161,7 +151,13 @@ class DeleteCronJobForm(DeleteForm):
 
 
 
+class ManualRun(grok.View):
+    grok.context(interfaces.ICronJob)
 
+    def render(self):
+        container = component.getUtility(interfaces.ICronJobContainerLocator)()
+        container._queue.put(self.context)
+        self.redirect(grok.url(self.request, container))
 
 
 

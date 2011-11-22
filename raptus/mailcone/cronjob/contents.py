@@ -45,6 +45,17 @@ class CronJobContainer(TaskService, bases.Container, grok.LocalUtility):
     processorFactory = processor.MultiProcessor
     taskInterface = interfaces.ITask
 
+
+    def __init__(self):
+        super(CronJobContainer, self).__init__()
+        self.jobs = self
+
+    def __getitem__(self, id):
+        return super(CronJobContainer, self).__getitem__(str(id))
+    
+    def __setitem__(self, id, obj):
+        super(CronJobContainer, self).__setitem__(str(id), obj)
+
     def addCronJob(self, task, input=None, minute=(), hour=(),
                    dayOfMonth=(),  month=(), dayOfWeek=(), delay=None,):
         """ - add custom cronjob so we can subclassing in future
@@ -61,13 +72,9 @@ class CronJobContainer(TaskService, bases.Container, grok.LocalUtility):
         self._scheduledQueue.put(newjob)
         return jobid
 
-
-    def hasJobsWaiting(self, now=None):
-        # todo
-        return False
-
     def deleteCronJob(self, jobid):
         data = list()
+        import pdb;pdb.set_trace()
         for i in self._scheduledQueue:
             if not i.id == jobid:
                 data.append(i)

@@ -5,8 +5,9 @@ from zope import component
 from zope.schema import vocabulary
 from zope.schema.fieldproperty import FieldProperty
 
-from raptus.mailcone.cronjob import _
+from raptus.mailcone.rules.processor import process
 
+from raptus.mailcone.cronjob import _
 from raptus.mailcone.cronjob.interfaces import ITask
 
 
@@ -21,7 +22,8 @@ class ProcessRulesTask(object):
     outputSchema = FieldProperty(ITask['outputSchema'])
 
     def __call__(self, service, jobid, input):
-        return 'task return'
+        process()
+        return 'rules processed'
 grok.global_utility(ProcessRulesTask, name='raptus.mailcone.cronjob.process_rules_task')
 
 
