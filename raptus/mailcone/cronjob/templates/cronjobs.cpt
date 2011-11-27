@@ -1,6 +1,6 @@
 <div class="ui-splitter"
      i18n:domain="raptus.mailcone.cronjob">
-    <div>
+    <div class="primar-view">
         <div tal:replace="structure view.cronjobtable" />
         <div class="formControls">
             <a tal:attributes="href view.addurl" class="ui-add ui-button" i18n:translate="">Add new Cronjob</a>
