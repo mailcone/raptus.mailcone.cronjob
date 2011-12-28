@@ -3,7 +3,10 @@
     <div class="primar-view">
         <div tal:replace="structure view.cronjobtable" />
         <div class="formControls">
-            <a tal:attributes="href view.addurl" class="ui-add ui-button" i18n:translate="">Add new Cronjob</a>
+            <a tal:attributes="href view.addurl" class="ui-add ui-button" i18n:attributes="">
+            	<span class="ui-icon ui-icon-plusthick" i18n:translate=""></span>
+            	<span class="text" i18n:translate="">Add Cronjob</span>
+            </a>
         </div>
     </div>
     <div id="ui-datatable-ajaxcontent">

@@ -91,7 +91,7 @@ class CronJobTable(BaseDataTable):
 class CronJobs(Page):
     grok.name('index')
     grok.context(interfaces.ICronJobContainer)
-    locatormenuitem(ICronjobMenu, interfaces.ICronJobContainerLocator, _(u'tasks'))
+    locatormenuitem(ICronjobMenu, interfaces.ICronJobContainerLocator, _(u'Tasks'))
     
     @property
     def cronjobtable(self):
