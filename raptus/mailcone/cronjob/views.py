@@ -85,6 +85,9 @@ class CronJobTable(BaseDataTable):
                 dict( title = _('edit'),
                       cssclass = 'ui-icon ui-icon-pencil ui-datatable-ajaxlink',
                       link = 'editcronjobform'),)
+    
+    def _metadata(self, brains):
+        return dict();
 
 
 
