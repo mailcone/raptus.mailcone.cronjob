@@ -28,6 +28,7 @@ setup(name='raptus.mailcone.cronjob',
           'raptus.mailcone.core',
           'raptus.mailcone.customers',
           'raptus.mailcone.rules',
+          'raptus.mailcone.persistentlog',
           'z3c.taskqueue',
 
       ],
