@@ -74,7 +74,6 @@ class CronJobContainer(TaskService, bases.Container, grok.LocalUtility):
 
     def deleteCronJob(self, jobid):
         data = list()
-        import pdb;pdb.set_trace()
         for i in self._scheduledQueue:
             if not i.id == jobid:
                 data.append(i)

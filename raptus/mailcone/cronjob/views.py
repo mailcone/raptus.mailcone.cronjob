@@ -59,7 +59,7 @@ class WidgetTask(SelectWidget):
 
 
 def getCronJobsFields():
-    form_fields = grok.AutoFields(interfaces.ICronJob).select('task', 'minute', 'hour', 'dayOfMonth',
+    form_fields = grok.Fields(interfaces.ICronJob).select('task', 'minute', 'hour', 'dayOfMonth',
                                                               'month', 'dayOfWeek','delay')
     form_fields['minute'].custom_widget = WidgetMinute
     form_fields['hour'].custom_widget = WidgetHour
@@ -67,6 +67,7 @@ def getCronJobsFields():
     form_fields['month'].custom_widget = WidgetMonth
     form_fields['dayOfWeek'].custom_widget = WidgetDayOfWeek
     form_fields['task'].custom_widget = WidgetTask
+    form_fields['delay'].description = _('One Time Job if a value is set (all others settings are ignored). Time in second from now.')
     label = _('Add a new cronjob')
     return form_fields
 

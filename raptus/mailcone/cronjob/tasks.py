@@ -28,20 +28,6 @@ grok.global_utility(ProcessRulesTask, name='raptus.mailcone.cronjob.process_rule
 
 
 
-class ProcessMailsTask(object):
-    grok.implements(ITask)
-    
-    name = _('Process Mails to Database')
-    
-    inputSchema = FieldProperty(ITask['inputSchema'])
-    outputSchema = FieldProperty(ITask['outputSchema'])
-
-    def __call__(self, service, jobid, input):
-        return 'task return'
-grok.global_utility(ProcessMailsTask, name='raptus.mailcone.cronjob.process_mails_task')
-
-
-
 register = vocabulary.getVocabularyRegistry().register
 def vocabulary_task(context):
     terms = list()
