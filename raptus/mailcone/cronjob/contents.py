@@ -56,10 +56,18 @@ class CronJobContainer(TaskService, bases.Container, grok.LocalUtility):
     def __setitem__(self, id, obj):
         super(CronJobContainer, self).__setitem__(str(id), obj)
 
+    def reschedule(self, jobid):
+        job = self[jobid]
+        if job.delay is None:
+            job.status = CRONJOB
+        else:
+            job.status = DELAYED
+        self._scheduledQueue.put(job)
+
     def addCronJob(self, task, input=None, minute=(), hour=(),
                    dayOfMonth=(),  month=(), dayOfWeek=(), delay=None,):
         """ - add custom cronjob so we can subclassing in future
-            - notified needed events for catalog
+            - notified required events for catalog
         """
         jobid = self._generateId()
         newjob = CronJob(jobid, task, input,
@@ -82,6 +90,13 @@ class CronJobContainer(TaskService, bases.Container, grok.LocalUtility):
         
     def getCronJob(self, jobid):
         return self[str(jobid)]
+
+
+
+@grok.subscribe(interfaces.ICronJob, grok.IObjectModifiedEvent)
+def cronjob_modified_event(obj, event):
+    container = component.getUtility(interfaces.ICronJobContainerLocator)()
+    container.reschedule(obj.__name__)
 
 
 

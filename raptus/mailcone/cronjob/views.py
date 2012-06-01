@@ -2,8 +2,9 @@ import os
 import grok
 
 from zope import component
-from zope.formlib.itemswidgets import MultiSelectWidget, SelectWidget
 from zope.schema import vocabulary
+from zope.container.contained import notifyContainerModified
+from zope.formlib.itemswidgets import MultiSelectWidget, SelectWidget
 from zope.publisher.interfaces import NotFound
 from z3c.taskqueue.interfaces import ICronJob
 
@@ -67,8 +68,7 @@ def getCronJobsFields():
     form_fields['month'].custom_widget = WidgetMonth
     form_fields['dayOfWeek'].custom_widget = WidgetDayOfWeek
     form_fields['task'].custom_widget = WidgetTask
-    form_fields['delay'].description = _('One Time Job if a value is set (all others settings are ignored). Time in second from now.')
-    label = _('Add a new cronjob')
+    form_fields['delay'].field.description = _('One Time Job if a value is set (all others settings are ignored). Time in second from now.')
     return form_fields
 
 
@@ -133,12 +133,15 @@ class AddCronJobForm(AddForm):
 
 
 
-
 class EditCronJobForm(EditForm):
     grok.context(interfaces.ICronJob)
     grok.require('zope.Public')
     form_fields = getCronJobsFields()
     label = _('Edit cron job')
+
+    def apply(self, **data):
+        super(EditCronJobForm, self).apply(**data)
+        notifyContainerModified(self.context)
 
 
 
