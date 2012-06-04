@@ -76,7 +76,7 @@ def getCronJobsFields():
 class CronJobTable(BaseDataTable):
     grok.context(interfaces.ICronJobContainer)
     interface_fields = interfaces.ICronJob
-    select_fields = ['id', 'time_of_next_call']
+    select_fields = ['id', 'time_of_next_call', 'status']
     actions = ( dict( title = _('manual run'),
                       cssclass = 'ui-icon ui-icon-arrowrefresh-1-s',
                       link = 'manualrun'),
