@@ -6,7 +6,7 @@ from zope.schema import vocabulary
 from zope.container.contained import notifyContainerModified
 from zope.formlib.itemswidgets import MultiSelectWidget, SelectWidget
 from zope.publisher.interfaces import NotFound
-from z3c.taskqueue.interfaces import ICronJob
+from z3c.taskqueue.interfaces import ICronJob, PROCESSING
 
 from raptus.mailcone.core.interfaces import IMailcone
 from raptus.mailcone.layout.views import Page, EditForm, AddForm, EditForm, DeleteForm, DisplayForm
@@ -76,7 +76,7 @@ def getCronJobsFields():
 class CronJobTable(BaseDataTable):
     grok.context(interfaces.ICronJobContainer)
     interface_fields = interfaces.ICronJob
-    select_fields = ['id', 'time_of_next_call', 'status']
+    select_fields = ['id', 'time_of_next_call', 'started', 'status']
     actions = ( dict( title = _('manual run'),
                       cssclass = 'ui-icon ui-icon-arrowrefresh-1-s',
                       link = 'manualrun'),
@@ -87,8 +87,11 @@ class CronJobTable(BaseDataTable):
                       cssclass = 'ui-icon ui-icon-pencil ui-datatable-ajaxlink',
                       link = 'editcronjobform'),)
     
-    def _metadata(self, brains):
-        return dict();
+    def _metadata(self, objs):
+        css_class = dict()
+        for index, obj in enumerate(objs):
+            css_class[index] = obj.status == PROCESSING and 'table-color-red' or ' '
+        return dict(css_class = css_class)
 
 
 

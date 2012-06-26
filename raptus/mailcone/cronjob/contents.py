@@ -1,5 +1,6 @@
 import grok
 import pytz
+import transaction
 
 from datetime import datetime
 
@@ -14,7 +15,7 @@ from z3c.taskqueue import processor
 from z3c.taskqueue.startup import databaseOpened
 from z3c.taskqueue.job import CronJob as BaseCronJob
 from z3c.taskqueue.service import TaskService
-from z3c.taskqueue.interfaces import CRONJOB, DELAYED
+from z3c.taskqueue.interfaces import CRONJOB, DELAYED, PROCESSING
 
 from raptus.mailcone.cronjob import interfaces
 from raptus.mailcone.core import bases
@@ -91,6 +92,25 @@ class CronJobContainer(TaskService, bases.Container, grok.LocalUtility):
     def getCronJob(self, jobid):
         return self[str(jobid)]
 
+    def processNext(self, now=None, jobid=None):
+        job = self[jobid]
+        old = job.status
+        job.status = PROCESSING
+        transaction.commit()
+        
+        try:
+            return_value = super(CronJobContainer, self).processNext(now, jobid)
+        except Exception, e:
+            transaction.abort()
+            job.status = old
+            transaction.commit()
+            raise e
+        
+        if job.status == PROCESSING:
+            job.status = old
+        if old == CRONJOB:
+            job.status = CRONJOB
+        return return_value
 
 
 @grok.subscribe(interfaces.ICronJob, grok.IObjectModifiedEvent)
