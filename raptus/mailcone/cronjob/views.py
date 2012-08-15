@@ -112,7 +112,7 @@ class CronJobs(Page):
 
 class AddCronJobForm(AddForm):
     grok.context(interfaces.ICronJobContainer)
-    grok.require('zope.Public')
+    grok.require('zope.View')
 
     form_fields = getCronJobsFields()
     
@@ -138,7 +138,7 @@ class AddCronJobForm(AddForm):
 
 class EditCronJobForm(EditForm):
     grok.context(interfaces.ICronJob)
-    grok.require('zope.Public')
+    grok.require('zope.View')
     form_fields = getCronJobsFields()
     label = _('Edit cron job')
 
@@ -150,7 +150,7 @@ class EditCronJobForm(EditForm):
 
 class DeleteCronJobForm(DeleteForm):
     grok.context(interfaces.ICronJob)
-    grok.require('zope.Public')
+    grok.require('zope.View')
     form_fields = getCronJobsFields()
     
     def item_title(self):
