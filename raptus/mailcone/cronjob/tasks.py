@@ -38,14 +38,14 @@ class CleanupMails7Days(object):
     
     @property
     def name(self):
-        return _('Remove mails older than ${delay} days', mapping=dict(days=self.delay))
+        return _('Remove mails older than ${days} days', mapping=dict(days=self.delay))
     
     def __call__(self, service, jobid, input):
         import pdb;pdb.set_trace()
         session = rdb.Session()
         filter = Mail.parsing_date < datetime.datetime.now() - datetime.timedelta(seconds=self.delay)
         session.query(Mail).filter(filter).delete()
-grok.global_utility(CleanupMails7Days, name='raptus.mailcone.cronjob.cleanupmails_7_days')
+grok.global_utility(CleanupMails7Days, name='raptus.mailcone.cronjob.cleanupmails_07_days')
 
 
 class CleanupMails14Days(CleanupMails7Days):
