@@ -5,6 +5,7 @@ import transaction
 from datetime import datetime
 
 from zope import component
+from zope.schema.fieldproperty import FieldProperty
 from zope.processlifetime import IDatabaseOpenedWithRoot
 from zope.app.publication.zopepublication import ZopePublication
 
@@ -27,6 +28,8 @@ from raptus.mailcone.core.interfaces import IMailcone, IIntIdManager
 
 class CronJob(BaseCronJob, grok.Model):
     grok.implements(interfaces.ICronJob)
+
+    name = FieldProperty(interfaces.ICronJob['name'])
 
     @property
     def time_of_next_call(self):

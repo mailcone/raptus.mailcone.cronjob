@@ -26,7 +26,7 @@ class ICronJobContainerLocator(IContainerLocator):
 
 
 class ICronJob(IBaseCronJob, IContainer):
-    
+    name = schema.TextLine(title=_('Name'), default=u'')
     time_of_next_call = schema.Datetime(title=_('time of next call'), readonly=True)
     started = schema.Datetime(title=_(u'Last starting date'),
                               description=_(u'The date/time at which the job was started.'))

@@ -60,7 +60,7 @@ class WidgetTask(SelectWidget):
 
 
 def getCronJobsFields():
-    form_fields = grok.Fields(interfaces.ICronJob).select('task', 'minute', 'hour', 'dayOfMonth',
+    form_fields = grok.Fields(interfaces.ICronJob).select('task', 'name', 'minute', 'hour', 'dayOfMonth',
                                                               'month', 'dayOfWeek','delay')
     form_fields['minute'].custom_widget = WidgetMinute
     form_fields['hour'].custom_widget = WidgetHour
@@ -76,7 +76,7 @@ def getCronJobsFields():
 class CronJobTable(BaseDataTable):
     grok.context(interfaces.ICronJobContainer)
     interface_fields = interfaces.ICronJob
-    select_fields = ['id', 'time_of_next_call', 'started', 'status']
+    select_fields = ['name', 'time_of_next_call', 'started', 'status']
     actions = ( dict( title = _('manual run'),
                       cssclass = 'ui-icon ui-icon-arrowrefresh-1-s',
                       link = 'manualrun'),
@@ -124,7 +124,8 @@ class AddCronJobForm(AddForm):
                   dayOfMonth = data['dayOfMonth'],
                   month = data['month'],
                   dayOfWeek = data['dayOfWeek'],
-                  delay = data['delay'])
+                  delay = data['delay'],
+                  name = data['name'])
         
         return self.context.addCronJob(**kw)
 
