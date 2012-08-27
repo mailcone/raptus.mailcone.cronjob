@@ -41,7 +41,6 @@ class CleanupMails7Days(object):
         return _('Remove mails older than ${days} days', mapping=dict(days=self.delay))
     
     def __call__(self, service, jobid, input):
-        import pdb;pdb.set_trace()
         session = rdb.Session()
         filter = Mail.parsing_date < datetime.datetime.now() - datetime.timedelta(seconds=self.delay)
         session.query(Mail).filter(filter).delete()
