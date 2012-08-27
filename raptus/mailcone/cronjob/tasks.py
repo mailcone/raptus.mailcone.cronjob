@@ -42,7 +42,7 @@ class CleanupMails7Days(object):
     
     def __call__(self, service, jobid, input):
         session = rdb.Session()
-        filter = Mail.parsing_date < datetime.datetime.now() - datetime.timedelta(seconds=self.delay)
+        filter = Mail.parsing_date < datetime.datetime.now() - datetime.timedelta(days=self.delay)
         session.query(Mail).filter(filter).delete()
 grok.global_utility(CleanupMails7Days, name='raptus.mailcone.cronjob.cleanupmails_07_days')
 
