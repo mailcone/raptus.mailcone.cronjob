@@ -31,6 +31,25 @@ class CronJob(BaseCronJob, grok.Model):
 
     name = FieldProperty(interfaces.ICronJob['name'])
 
+    def __init__(self, id, task, name, input,
+                 minute=(),
+                 hour=(),
+                 dayOfMonth=(),
+                 month=(),
+                 dayOfWeek=(),
+                 delay=None,
+                ):
+        self.name = name
+        super(CronJob, self).__init__(id,
+                                      task,
+                                      input,
+                                      minute,
+                                      hour,
+                                      dayOfMonth,
+                                      month,
+                                      dayOfWeek,
+                                      delay)
+        
     @property
     def time_of_next_call(self):
         dt = datetime.utcfromtimestamp(self.timeOfNextCall())
@@ -68,13 +87,13 @@ class CronJobContainer(TaskService, bases.Container, grok.LocalUtility):
             job.status = DELAYED
         self._scheduledQueue.put(job)
 
-    def addCronJob(self, task, input=None, minute=(), hour=(),
+    def addCronJob(self, task, name, input=None, minute=(), hour=(),
                    dayOfMonth=(),  month=(), dayOfWeek=(), delay=None,):
         """ - add custom cronjob so we can subclassing in future
             - notified required events for catalog
         """
         jobid = self._generateId()
-        newjob = CronJob(jobid, task, input,
+        newjob = CronJob(jobid, task, name, input,
                 minute, hour, dayOfMonth, month, dayOfWeek, delay)
         self[str(jobid)] = newjob
         if newjob.delay is None:
