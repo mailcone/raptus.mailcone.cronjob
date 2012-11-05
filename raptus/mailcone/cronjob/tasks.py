@@ -1,4 +1,5 @@
 import grok
+import logging
 import datetime
 
 from megrok import rdb
@@ -7,8 +8,10 @@ from zope import component
 from zope.schema import vocabulary
 from zope.schema.fieldproperty import FieldProperty
 
-from raptus.mailcone.rules.processor import process
 from raptus.mailcone.mails.contents import Mail
+from raptus.mailcone.rules.processor import process
+from raptus.mailcone.persistentlog.logger import PersistentLogHandler
+from raptus.mailcone.persistentlog.interfaces import ILogContainerLocator
 
 from raptus.mailcone.cronjob import _
 from raptus.mailcone.cronjob.interfaces import ITask
@@ -31,6 +34,14 @@ grok.global_utility(ProcessRulesTask, name='raptus.mailcone.cronjob.process_rule
 
 
 
+
+mcu_logger = logging.getLogger('raptus.mailcone.cronjob.cleanup')
+mcu_handler = PersistentLogHandler(u'cronjob: mail cleanup', ILogContainerLocator)
+mcu_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+mcu_handler.setLevel(0)
+mcu_logger.addHandler(mcu_handler)
+
+
 class CleanupMails7Days(object):
     grok.implements(ITask)
     
@@ -41,9 +52,18 @@ class CleanupMails7Days(object):
         return _('Remove mails older than ${days} days', mapping=dict(days=self.delay))
     
     def __call__(self, service, jobid, input):
-        session = rdb.Session()
-        filter = Mail.parsing_date < datetime.datetime.now() - datetime.timedelta(days=self.delay)
-        session.query(Mail).filter(filter).delete()
+        try:
+            mcu_logger.info('mail clean up "%s days" started' % self.delay)
+            session = rdb.Session()
+            filter = Mail.parsing_date < datetime.datetime.now() - datetime.timedelta(days=self.delay)
+            count = session.query(Mail).filter(filter).delete()
+            mcu_logger.info('%s mails deleted' % count)
+        except Exception, e:
+            mcu_logger.error(str(e))
+        finally:
+            mcu_logger.info('cleanup job finished')
+            mcu_handler.persist()
+            
 grok.global_utility(CleanupMails7Days, name='raptus.mailcone.cronjob.cleanupmails_07_days')
 
 
